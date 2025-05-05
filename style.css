@@ -1,7 +1,7 @@
 #matrixholder {
     display: flex;
     flex-direction: row;
-    width: 100px;
+    width: 100%;
 }
 
 .column {
@@ -10,8 +10,8 @@
 }
 
 input {
-    width: 50px;
-    height: 50px;
+    width: 25px;
+    height: 25px;
 }
 
 #refs {
@@ -31,4 +31,34 @@ input[type="number"]::-webkit-inner-spin-button {
 /* Hide spinner arrows in Firefox */
 input[type="number"] {
     -moz-appearance: textfield;
+    background-color: rgba(75, 75, 75, 255);
+    color: white;
+    text-align: center;
+}
+
+
+#songinfo {
+    background-color: rgba(75,75,75,255);
+    width: 100%;
+}
+
+#controls {
+    background-color: rgba(75,75,75,255);
+    width: 100%;
+}
+
+.component {
+    text-align: center;
+    background-color: rgba(50,50,50,255);
+    color: white;
+}
+
+body {
+    display: flex;
+    flex-direction: row;
+    background-color: rgba(30,30,30,255);
+}
+
+#info {
+    color: white;
 }

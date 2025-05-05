@@ -2,39 +2,47 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/soundfont-player/dist/soundfont-player.min.js"></script>
+<div id="sequencer">
 
 
-<div id="editor">
-    <div id="song">
-        <div id="matrixholder">
+    <div id="controls">
+        <button onclick="nextFreq()" class="component">next matrix</button>
+
+        <button onclick="backToStart()" class="component">Back To Start</button>
+        
+        <button onclick="play()" class="component">Play</button>
+        <button onclick="stop()" class="component">Stop</button>
+        
+        <button onclick = "resetFreq()" class="component">Reset Frequency</button>
+
+
+    </div>
+    <div id="editor">
+        <div id="song">
+            <div id="matrixholder">
+            </div>
+            <div id="refs">
+        
+            </div>
         </div>
-        <div id="refs">
-    
-        </div>
-    </div>
-    <div id="instrument">
-        <select id="userInst">
-            
+        <div id="instrument">
 
-        </select>
+        </div>
+        <div id="songinfo">
+            <a style="color: white">BPM: </a>
+            <input type="number" id="bpm" value="120" min="1" step="any" style="width: 50px; text-align: center;">
+            <a style="color: white">Instrument: </a>
+            <select id="userInst" class="component">
+            </select>
+        </div>
+        
     </div>
-    <div id="songinfo">
-        <a>BPM: </a>
-        <input type="number" id="bpm" value="120" min="1" step="any">
-    </div>
-    
+</div>
+<div id="info">
+    <a href="https://github.com/brodybigwood/just-intonation-sequencer">GitHub Link</a>
 </div>
 
 
-<button onclick="nextFreq()">next matrix</button>
 
-<button onclick="backToStart()">Back To Start</button>
-
-<button onclick="play()">Play</button>
-<button onclick="stop()">Stop</button>
-
-<button onclick = "resetFreq()">Reset Frequency</button>
-
-<a href="https://github.com/brodybigwood/just-intonation-sequencer">GitHub Link</a>
 
 <script defer src="script.js"></script>

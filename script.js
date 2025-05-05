@@ -1,5 +1,5 @@
 
-cellsize = 50;
+cellsize = 25;
 
 let isPromptOpen = false;
 let lastPromptTime = 0;
