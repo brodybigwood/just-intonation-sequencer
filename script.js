@@ -212,7 +212,7 @@ function drawReference() {
 
         ctx.beginPath();
         ctx.moveTo(ctx.canvas.width/3, (referenceFrom + 0.5)*ctx.canvas.height/numNotes);
-        ctx.fillStyle = "red";
+        ctx.strokeStyle = "white";
         ctx.lineTo(2*ctx.canvas.width/3, (referenceTo + 0.5)*ctx.canvas.height/numNotes);
     
     
