@@ -435,6 +435,9 @@ const instruments = [
   });
   
   function setInstrument(name) {
+    for(let i = 0; i<numVoices; i++) {
+        noteOff(i);
+    } 
     Soundfont.instrument(audioCtx, name, {
         soundfont: 'MusyngKite' // or 'FluidR3_GM', etc.
       }).then(function(instrument) {
