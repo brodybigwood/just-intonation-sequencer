@@ -53,7 +53,7 @@ input[type="number"] {
     color: white;
 }
 
-body {
+#page {
     display: flex;
     flex-direction: row;
     background-color: rgba(30,30,30,255);

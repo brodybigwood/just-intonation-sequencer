@@ -2,46 +2,47 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/soundfont-player/dist/soundfont-player.min.js"></script>
-<div id="sequencer">
+<div id="page">
+    <div id="sequencer">
 
 
-    <div id="controls">
-        <button onclick="nextFreq()" class="component">next matrix</button>
+        <div id="controls">
+            <button onclick="nextFreq()" class="component">next matrix</button>
 
-        <button onclick="backToStart()" class="component">Back To Start</button>
-        
-        <button onclick="play()" class="component">Play</button>
-        <button onclick="stop()" class="component">Stop</button>
-        
-        <button onclick = "resetFreq()" class="component">Reset Frequency</button>
+            <button onclick="backToStart()" class="component">Back To Start</button>
+            
+            <button onclick="play()" class="component">Play</button>
+            <button onclick="stop()" class="component">Stop</button>
+            
+            <button onclick = "resetFreq()" class="component">Reset Frequency</button>
 
 
+        </div>
+        <div id="editor">
+            <div id="song">
+                <div id="matrixholder">
+                </div>
+                <div id="refs">
+            
+                </div>
+            </div>
+            <div id="instrument">
+
+            </div>
+            <div id="songinfo">
+                <a style="color: white">BPM: </a>
+                <input type="number" id="bpm" value="120" min="1" step="any" style="width: 50px; text-align: center;">
+                <a style="color: white">Instrument: </a>
+                <select id="userInst" class="component">
+                </select>
+            </div>
+            
+        </div>
     </div>
-    <div id="editor">
-        <div id="song">
-            <div id="matrixholder">
-            </div>
-            <div id="refs">
-        
-            </div>
-        </div>
-        <div id="instrument">
-
-        </div>
-        <div id="songinfo">
-            <a style="color: white">BPM: </a>
-            <input type="number" id="bpm" value="120" min="1" step="any" style="width: 50px; text-align: center;">
-            <a style="color: white">Instrument: </a>
-            <select id="userInst" class="component">
-            </select>
-        </div>
-        
+    <div id="info">
+        <a href="https://github.com/brodybigwood/just-intonation-sequencer">GitHub Link</a>
     </div>
 </div>
-<div id="info">
-    <a href="https://github.com/brodybigwood/just-intonation-sequencer">GitHub Link</a>
-</div>
-
 
 
 
