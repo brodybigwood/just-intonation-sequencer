@@ -312,38 +312,29 @@ function noteOn(node, midiNote) {
 
     voice = nodes[node];
 
-    if(midiNote == voice.lastfreq) {
+    if(midiNote == voice.lastfreq && voice.note != null) {
         return;
     }
-    console.log(voice.lastfreq)
-    console.log(midiNote)
+
     voice.lastfreq = midiNote;
     if(voice.note != null) voice.note.stop();
     voice.note = voice.instrument.play(midiNote, audioCtx.currentTime, { gain: 1});
+
 }
 
 function noteOff(node) {
     const voice = nodes[node];
     if (voice && voice.note) {
-      voice.note.stop();
-      voice.note = null;
+        voice.note.stop();
+        voice.note = null;
     }
   }
 
 
 function play() {
     audioCtx.resume().then(() => {
-        for(let i = 0; i<3; i++) {
-            const oscillator = audioCtx.createOscillator();
-            oscillator.type = 'sine'; // 'sine', 'square', 'sawtooth', or 'triangle'
-            oscillator.frequency.setValueAtTime(440, audioCtx.currentTime); // frequency in Hz
-            const gainNode = audioCtx.createGain();
-            gainNode.gain.value = 0.3; // set volume (0.0 to 1.0)
-            oscillator.connect(gainNode).connect(audioCtx.destination);
-
-
-
-            oscillators[i] = (oscillator);
+        for(let i = 0; i<numVoices; i++) {
+            noteOff(i);
             
         }
         currentChord = -1;
