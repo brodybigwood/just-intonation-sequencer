@@ -1,4 +1,5 @@
 
+cellsize = 50;
 
 let isPromptOpen = false;
 let lastPromptTime = 0;
@@ -30,10 +31,10 @@ async function handleCanvasClick(e) {
     let type, snapY;
     
     if (x > 0 && x < cellWidth) {
-        snapY = Math.floor(y / 50);
+        snapY = Math.floor(y / cellsize);
         type = "from";
     } else if (x > width - cellWidth && x < width) {
-        snapY = Math.floor(y / 50);
+        snapY = Math.floor(y / cellsize);
         type = "to";
     } else {
         return;
@@ -82,7 +83,7 @@ groups = []
 refs = []
 
 
-numVoices = 3;
+numVoices = 10;
 
 numGroups = 4;
 
@@ -97,8 +98,8 @@ cctx = canvas.getContext("2d");
 for(let i = 0; i<numGroups; i++) {
 
     cvs = document.createElement("canvas");
-    cvs.width = 50;
-    cvs.height = 50*numVoices;
+    cvs.width = cellsize;
+    cvs.height = cellsize*numVoices;
 
     const ctx = cvs.getContext("2d");
 
@@ -151,11 +152,11 @@ currentChord = 0;
 
 function drawPos() {
     canvas.height = 5;
-    canvas.width = 50*numGroups+50*numGroups;
+    canvas.width = cellsize*numGroups+cellsize*numGroups;
     cctx.fillStyle = "grey";
     cctx.fillRect(0,0,canvas.width,canvas.height);
     cctx.fillStyle = "lightgrey"
-    cctx.fillRect(50+currentChord*(50+50), 0, (50), 5);
+    cctx.fillRect(cellsize+currentChord*(cellsize+cellsize), 0, (cellsize), 5);
 }
 
 function drawReference() {
@@ -229,6 +230,10 @@ drawReference();
 
 loopLength = 4
 
+nodes = [
+
+]
+
 function nextFreq() {
 
 
@@ -274,47 +279,56 @@ function nextFreq() {
     userDenom = parseFloat(groups[currentChord].notes[groups[currentChord].referenceTo].value, 10);
 
 
-    for(let i = 0; i<3; i++) {
-        oscillator = oscillators[i];
-        frequency = oscillator.frequency.value;
+    for(let i = 0; i<numVoices; i++) {
         userNum = parseFloat(groups[currentChord].notes[i].value, 10);
 
 
 
         frequency = baseFreq * userNum/userDenom;
-
+        if (!Number.isFinite(frequency)) {
+            noteOff(i);
+            continue;
+        }
         midiNote = frequencyToMidi(frequency);
-        detune = getDetune(frequency);
-        player.detune = 50;
-        player.play(midiNote, 0, { duration: 0.5 });
-
-
-        oscillator.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+        //player.play(midiNote, 0, { duration: 0.5 });
+        noteOn(i, midiNote);
     }
-
     drawReference();
-
 }
-
-
-
 
 
 currentIteration = 0;
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-let player; // Soundfont player for your instrument
 
-Soundfont.instrument(audioCtx, 'violin').then(function(instrument) {
-    player = instrument;
-})
 
 oscillators = [];
 
 baseFreq = 350;
 
+function noteOn(node, midiNote) {
+   // if (!nodes[node] || nodes[node].note) return;
 
+    voice = nodes[node];
+
+    if(midiNote == voice.lastfreq) {
+        return;
+    }
+    console.log(voice.lastfreq)
+    console.log(midiNote)
+    voice.lastfreq = midiNote;
+    if(voice.note != null) voice.note.stop();
+    voice.note = voice.instrument.play(midiNote, audioCtx.currentTime, { gain: 1});
+}
+
+function noteOff(node) {
+    const voice = nodes[node];
+    if (voice && voice.note) {
+      voice.note.stop();
+      voice.note = null;
+    }
+  }
 
 
 function play() {
@@ -364,3 +378,77 @@ function getDetune(frequency) {
 function resetFreq() {
     baseFreq = 350;
 }
+
+
+
+const instruments = [
+    'acoustic_grand_piano', 'bright_acoustic_piano', 'electric_grand_piano', 'honky_tonk_piano',
+    'electric_piano_1', 'electric_piano_2', 'harpsichord', 'clavinet',
+    'celesta', 'glockenspiel', 'music_box', 'vibraphone',
+    'marimba', 'xylophone', 'tubular_bells', 'dulcimer',
+    'drawbar_organ', 'percussive_organ', 'rock_organ', 'church_organ',
+    'reed_organ', 'accordion', 'harmonica', 'tango_accordion',
+    'acoustic_guitar_nylon', 'acoustic_guitar_steel', 'electric_guitar_jazz', 'electric_guitar_clean',
+    'electric_guitar_muted', 'overdriven_guitar', 'distortion_guitar', 'guitar_harmonics',
+    'acoustic_bass', 'electric_bass_finger', 'electric_bass_pick', 'fretless_bass',
+    'slap_bass_1', 'slap_bass_2', 'synth_bass_1', 'synth_bass_2',
+    'violin', 'viola', 'cello', 'contrabass',
+    'tremolo_strings', 'pizzicato_strings', 'orchestral_harp', 'timpani',
+    'string_ensemble_1', 'string_ensemble_2', 'synthstrings_1', 'synthstrings_2',
+    'choir_aahs', 'voice_oohs', 'synth_choir', 'orchestra_hit',
+    'trumpet', 'trombone', 'tuba', 'muted_trumpet',
+    'french_horn', 'brass_section', 'synthbrass_1', 'synthbrass_2',
+    'soprano_sax', 'alto_sax', 'tenor_sax', 'baritone_sax',
+    'oboe', 'english_horn', 'bassoon', 'clarinet',
+    'piccolo', 'flute', 'recorder', 'pan_flute',
+    'blown_bottle', 'shakuhachi', 'whistle', 'ocarina',
+    'lead_1_square', 'lead_2_sawtooth', 'lead_3_calliope', 'lead_4_chiff',
+    'lead_5_charang', 'lead_6_voice', 'lead_7_fifths', 'lead_8_bass_and_lead',
+    'pad_1_new_age', 'pad_2_warm', 'pad_3_polysynth', 'pad_4_choir',
+    'pad_5_bowed', 'pad_6_metallic', 'pad_7_halo', 'pad_8_sweep',
+    'fx_1_rain', 'fx_2_soundtrack', 'fx_3_crystal', 'fx_4_atmosphere',
+    'fx_5_brightness', 'fx_6_goblins', 'fx_7_echoes', 'fx_8_sci_fi',
+    'sitar', 'banjo', 'shamisen', 'koto',
+    'kalimba', 'bagpipe', 'fiddle', 'shanai',
+    'tinkle_bell', 'agogo', 'steel_drums', 'woodblock',
+    'taiko_drum', 'melodic_tom', 'synth_drum', 'reverse_cymbal',
+    'guitar_fret_noise', 'breath_noise', 'seashore', 'bird_tweet',
+    'telephone_ring', 'helicopter', 'applause', 'gunshot'
+  ];
+  
+  const select = document.getElementById("userInst")
+  
+  instruments.forEach(name => {
+    const option = document.createElement('option');
+    option.value = name;
+    option.textContent = name.replace(/_/g, ' ');
+    select.appendChild(option);
+  });
+  
+  function setInstrument(name) {
+    Soundfont.instrument(audioCtx, name, {
+        soundfont: 'MusyngKite' // or 'FluidR3_GM', etc.
+      }).then(function(instrument) {
+        nodes = []
+        for(let i = 0; i < numVoices; i++) {
+
+            nodes.push({
+                instrument, 
+                note:null,
+                lastfreq: null
+            });
+        }
+        player = instrument;
+      })
+    
+  }
+  
+  
+  select.addEventListener('change', function(e) {
+    setInstrument(e.target.value);
+  });
+  
+  setInstrument("violin");
+
+  let player; // Soundfont player for your instrument
+
