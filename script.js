@@ -331,8 +331,8 @@ function noteOff(node) {
   }
 
 
-function play() {
-    audioCtx.resume().then(() => {
+function backToStart() {
+
         for(let i = 0; i<numVoices; i++) {
             noteOff(i);
             
@@ -340,21 +340,39 @@ function play() {
         currentChord = -1;
         currentIteration = 0;
         baseFreq = 350;
-        nextFreq();
-        for(let i = 0; i<3; i++ ) {
-           // oscillators[i].start();
-        }
 
-    })
+
 };
+
+isPlaying = false;
+let loopId;
+
+
+function play() {
+
+    const bpm = parseFloat(document.getElementById("bpm").value);
+    backToStart(); 
+    clearInterval(loopId);
+    isPlaying = true;
+    nextFreq();
+    loopId = setInterval(() => {
+        if(isPlaying) {
+            nextFreq();
+        }
+    }, 60*1000.0/bpm)
+}
 
 function stop() {
     audioCtx.resume().then(() => {
-        for(let i = 0; i<3; i++) {
-            oscillators[i].stop();
+        for(let i = 0; i<numVoices; i++) {
+            noteOff(i);
         }
     })
+    isPlaying = false;
+    clearInterval(loopId);
 }
+
+
 
 
 function frequencyToMidi(frequency) {

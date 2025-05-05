@@ -18,12 +18,20 @@
 
         </select>
     </div>
+    <div id="songinfo">
+        <a>BPM: </a>
+        <input type="number" id="bpm" value="120" min="1" step="any">
+    </div>
+    
 </div>
 
 
 <button onclick="nextFreq()">next matrix</button>
 
-<button onclick="play()">play</button>
+<button onclick="backToStart()">Back To Start</button>
+
+<button onclick="play()">Play</button>
+<button onclick="stop()">Stop</button>
 
 <button onclick = "resetFreq()">Reset Frequency</button>
 
