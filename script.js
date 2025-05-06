@@ -91,6 +91,8 @@ canvas = document.createElement("canvas");
 
 document.getElementById("song").appendChild(canvas)
 
+
+
 cctx = canvas.getContext("2d");
 
 
@@ -100,6 +102,9 @@ for(let i = 0; i<numGroups; i++) {
     cvs = document.createElement("canvas");
     cvs.width = cellsize;
     cvs.height = cellsize*numVoices;
+    cvs.style.width = cvs.width + "px";
+    cvs.style.height = cvs.height + "px";
+
 
     const ctx = cvs.getContext("2d");
 
