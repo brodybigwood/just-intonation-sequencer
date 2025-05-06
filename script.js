@@ -129,6 +129,8 @@ for(let i = 0; i<numGroups; i++) {
 
         voiceSqr = document.createElement("input");
         voiceSqr.type = "number";
+        voiceSqr.style.width = cellsize;
+        voiceSqr.style.height = cellsize;
         
         col.appendChild(voiceSqr);
 
