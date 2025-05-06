@@ -158,6 +158,9 @@ currentChord = 0;
 function drawPos() {
     canvas.height = 5;
     canvas.width = cellsize*numGroups+cellsize*numGroups;
+    canvas.style.height = canvas.height + "px";
+    canvas.style.width = canvas.width + "px";
+    
     cctx.fillStyle = "grey";
     cctx.fillRect(0,0,canvas.width,canvas.height);
     cctx.fillStyle = "lightgrey"
