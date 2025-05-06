@@ -330,13 +330,13 @@ function noteOn(node, frequency) {
     noteLength = getNoteLength(midiNote)
     if(midiNote == voice.lastfreq && voice.note != null) {
         if(currentTime-voice.lastplayed >= noteLength || !Number.isFinite(voice.lastplayed)) {
-            voice.lastplayed = currentTime;
             noteOff(node);
         } else {
             return;
         }
     }
 
+    voice.lastplayed = currentTime;
 
 
 
