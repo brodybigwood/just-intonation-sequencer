@@ -66,8 +66,18 @@ input[type="number"] {
     display: flex;
     flex-direction: row;
     background-color: rgba(30,30,30,255);
+    width: 100%;
 }
 
 #info {
     color: white;
+}
+
+#editor {
+    width: 50%;
+}
+
+#song {
+    overflow-x: auto;
+    width: 100%;
 }

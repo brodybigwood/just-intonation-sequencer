@@ -85,7 +85,7 @@ refs = []
 
 numVoices = 10;
 
-numGroups = 4;
+numGroups = 32;
 
 canvas = document.createElement("canvas");
 
@@ -361,6 +361,7 @@ let loopId;
 function play() {
 
     const bpm = parseFloat(document.getElementById("bpm").value);
+    loopLength = parseInt(document.getElementById("loopLength").value);
     backToStart(); 
     clearInterval(loopId);
     isPlaying = true;

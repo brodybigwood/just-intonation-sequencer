@@ -8,7 +8,7 @@
 
 
         <div id="controls">
-            <button onclick="nextFreq()" class="component">next matrix</button>
+            <button onclick="nextFreq()" class="component">Play Next Matrix</button>
 
             <button onclick="backToStart()" class="component">Back To Start</button>
             
@@ -29,6 +29,8 @@
             <div id="songinfo">
                 <a style="color: white">BPM: </a>
                 <input type="number" id="bpm" value="120" min="1" step="any" style="width: 50px; text-align: center;">
+                <a style="color: white">Loop Length: </a>
+                <input type="number" id="loopLength" value="4" min="1" step="1" style="width: 25px; text-align: center;">
                 <a style="color: white">Instrument: </a>
                 <select id="userInst" class="component">
                 </select>
