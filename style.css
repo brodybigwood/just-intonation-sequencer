@@ -34,6 +34,8 @@ input[type="number"] {
     background-color: rgba(75, 75, 75, 255);
     color: white;
     text-align: center;
+    height: 25px;
+    width: 25px;
 }
 
 
