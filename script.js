@@ -288,7 +288,6 @@ function nextFreq() {
 
     userDenom = parseFloat(groups[currentChord].notes[groups[currentChord].referenceTo].value, 10);
 
-
     for(let i = 0; i<numVoices; i++) {
         userNum = parseFloat(groups[currentChord].notes[i].value, 10);
 
@@ -299,9 +298,9 @@ function nextFreq() {
             noteOff(i);
             continue;
         }
-        midiNote = frequencyToMidi(frequency);
+
         //player.play(midiNote, 0, { duration: 0.5 });
-        noteOn(i, midiNote);
+        noteOn(i, frequency);
     }
     drawReference();
 }
@@ -317,14 +316,30 @@ oscillators = [];
 
 baseFreq = 350;
 
-function noteOn(node, midiNote) {
+function getNoteLength(frequency) {
+    return 3000;
+}
+
+function noteOn(node, frequency) {
    // if (!nodes[node] || nodes[node].note) return;
+    midiNote = frequencyToMidi(frequency);
 
     voice = nodes[node];
 
+    currentTime = Date.now();
+    noteLength = getNoteLength(midiNote)
     if(midiNote == voice.lastfreq && voice.note != null) {
-        return;
+        if(currentTime-voice.lastplayed >= noteLength || !Number.isFinite(voice.lastplayed)) {
+            voice.lastplayed = currentTime;
+            noteOff(node);
+        } else {
+            return;
+        }
     }
+
+
+
+
 
     voice.lastfreq = midiNote;
     if(voice.note != null) voice.note.stop();
@@ -458,7 +473,8 @@ const instruments = [
             nodes.push({
                 instrument, 
                 note:null,
-                lastfreq: null
+                lastfreq: null,
+                lastplayed: null
             });
         }
         player = instrument;
