@@ -40,12 +40,13 @@ async function handleCanvasClick(e) {
         return;
     }
 
-    groupNum = parseInt(canvas.id);
+    groupNum = parseInt(canvas.dataset.group);
+    matrixNum = parseInt(canvas.dataset.matrix);
 
-    await clickReference(snapY, type, groupNum);
+    await clickReference(snapY, type, groupNum, matrixNum);
 }
 
-async function clickReference(noteNum, type, groupNum) {
+async function clickReference(noteNum, type, groupNum, matrixNum) {
     isPromptOpen = true;
     lastPromptTime = Date.now();
     
@@ -59,16 +60,17 @@ async function clickReference(noteNum, type, groupNum) {
             return;
         }
 
+        group = matrices[0].groups[groupNum]
         // Update your references...
         if (type === "from") {
-            groups[groupNum].referenceFromVal = referenceValue;
-            groups[groupNum].referenceFrom = noteNum;
+            group.referenceFromVal = referenceValue;
+            group.referenceFrom = noteNum;
         } else if (type === "to") {
-            groups[groupNum].referenceToVal = referenceValue;
-            groups[groupNum].referenceTo = noteNum;
+            group.referenceToVal = referenceValue;
+            group.referenceTo = noteNum;
         }
 
-        drawReference();
+        drawReference(matrixNum);
     } finally {
         isPromptOpen = false;
         lastPromptTime = Date.now();
@@ -78,7 +80,8 @@ async function clickReference(noteNum, type, groupNum) {
 
 cs = []
 
-groups = []
+matrices = []
+
 
 refs = []
 
@@ -95,67 +98,101 @@ document.getElementById("song").appendChild(canvas)
 
 cctx = canvas.getContext("2d");
 
+numLayers = 1;
 
 
-for(let i = 0; i<numGroups; i++) {
+function generateMatrix(n) {
 
-    cvs = document.createElement("canvas");
-    cvs.width = cellsize;
-    cvs.height = cellsize*numVoices;
-    cvs.style.width = cvs.width + "px";
-    cvs.style.height = cvs.height + "px";
+    songview = document.getElementById('song');
 
+    matrix = document.createElement('div');
 
-    const ctx = cvs.getContext("2d");
+    matrix.className = 'matrix';
 
-    cvs.className = "refCanvas";
+    songview.appendChild(matrix)
 
+    groups = [];
 
-    cvs.id = i;
+    cs = [];
 
+    for(let i = 0; i<numGroups; i++) {
 
+        cvs = document.createElement("canvas");
+        cvs.width = cellsize;
+        cvs.height = cellsize*numVoices;
+        cvs.style.width = cvs.width + "px";
+        cvs.style.height = cvs.height + "px";
     
-    document.getElementById("matrixholder").appendChild(cvs);
-
-    col = document.createElement("div");
-    col.className = "column";
-
-    cols = []
-    size = 0;
-
-    for(let j = 0; j<numVoices; j++) {
-
-
-
-        voiceSqr = document.createElement("input");
-        voiceSqr.type = "number";
-        voiceSqr.style.width = cellsize;
-        voiceSqr.style.height = cellsize;
+    
+        const ctx = cvs.getContext("2d");
+    
+        cvs.className = "refCanvas";
+    
+    
+        cvs.id = i;
+        cvs.dataset.matrix = n;
+        cvs.dataset.group = i;
+    
+    
         
-        col.appendChild(voiceSqr);
+        matrix.appendChild(cvs);
+    
+        col = document.createElement("div");
+        col.className = "column";
+    
+        cols = []
+        size = 0;
+    
+        for(let j = 0; j<numVoices; j++) {
+    
+    
+    
+            voiceSqr = document.createElement("input");
+            voiceSqr.type = "number";
+            voiceSqr.style.width = cellsize;
+            voiceSqr.style.height = cellsize;
+            
+            col.appendChild(voiceSqr);
+    
+            col[j] = voiceSqr;
+    
+            size++;
+    
+    
+        }
+    
+    
+        groups[i] = {
+            numNotes: numVoices,
+            notes: col,
+            referenceFrom: 0,
+            referenceFromVal: 1,
+            referenceTo: 1,
+            referenceToVal: 1,
+        }
 
-        col[j] = voiceSqr;
 
-        size++;
-
-
+        cs[i] = ctx;
+        matrix.appendChild(col);
+    
     }
-
-
-    groups[i] = {
-        numNotes: numVoices,
-        notes: col,
-        referenceFrom: 0,
-        referenceFromVal: 1,
-        referenceTo: 1,
-        referenceToVal: 1,
+    matrices[n] = {
+        groups: groups,
+        referenceCanvases: cs
     }
-    cs[i] = ctx;
-    document.getElementById("matrixholder").appendChild(col);
-
 }
 
 currentChord = 0;
+
+numMatrices = 1;
+
+for(let i = 0; i < numMatrices; i++) {
+    generateMatrix(i);
+    drawReference(i);
+}
+
+
+
 
 function drawPos() {
     canvas.height = 5;
@@ -169,11 +206,11 @@ function drawPos() {
     cctx.fillRect(cellsize+currentChord*(cellsize+cellsize), 0, (cellsize), 5);
 }
 
-function drawReference() {
+function drawReference(matrixNum) {
     for(let i = 0; i<cs.length; i++) {
-        ctx = cs[i];
+        ctx = matrices[matrixNum].referenceCanvases[i];
 
-        group = groups[i];
+        group = matrices[matrixNum].groups[i];
 
         numNotes = group.numNotes;
 
@@ -236,7 +273,7 @@ function drawReference() {
     updateListeners()
 }
 
-drawReference();
+
 
 loopLength = 4
 
@@ -255,6 +292,8 @@ function nextFreq() {
     currentChord++;
 
 
+    currGroup = matrices[0].groups[currentChord];
+
     if(currentIteration != 0 || currentChord != 0) {
 
         let prevIndex;
@@ -264,16 +303,19 @@ function nextFreq() {
             prevIndex = currentChord - 1;
         }
 
-        currentRefNum = groups[currentChord].referenceToVal;
-        currentRefDenom = groups[currentChord].referenceFromVal;
 
-        currentRefFrom = groups[currentChord].referenceFrom
+        prevGroup = matrices[0].groups[prevIndex];
 
-        prevRefTo = groups[prevIndex].referenceTo
+        currentRefNum = currGroup.referenceToVal;
+        currentRefDenom = currGroup.referenceFromVal;
 
-        prevRefRef = groups[prevIndex].notes[prevRefTo].value;
+        currentRefFrom = currGroup.referenceFrom
 
-        prevRefNote = groups[prevIndex].notes[currentRefFrom].value;
+        prevRefTo = prevGroup.referenceTo
+
+        prevRefRef = prevGroup.notes[prevRefTo].value;
+
+        prevRefNote = prevGroup.notes[currentRefFrom].value;
 
         refFromRatio = prevRefNote/prevRefRef
 
@@ -286,10 +328,10 @@ function nextFreq() {
         baseFreq = 350;
     }
 
-    userDenom = parseFloat(groups[currentChord].notes[groups[currentChord].referenceTo].value, 10);
+    userDenom = parseFloat(currGroup.notes[matrices[0].groups[currentChord].referenceTo].value, 10);
 
     for(let i = 0; i<numVoices; i++) {
-        userNum = parseFloat(groups[currentChord].notes[i].value, 10);
+        userNum = parseFloat(currGroup.notes[i].value, 10);
 
 
 
@@ -302,7 +344,7 @@ function nextFreq() {
         //player.play(midiNote, 0, { duration: 0.5 });
         noteOn(i, frequency);
     }
-    drawReference();
+    drawReference(0);
 }
 
 
@@ -323,6 +365,8 @@ function getNoteLength(frequency) {
 function noteOn(node, frequency) {
    // if (!nodes[node] || nodes[node].note) return;
     midiNote = frequencyToMidi(frequency);
+
+    console.log("playing "+frequency+"hz")
 
     voice = nodes[node];
 
@@ -487,7 +531,7 @@ const instruments = [
     setInstrument(e.target.value);
   });
   
-  setInstrument("violin");
+  setInstrument("acoustic_grand_piano");
 
   let player; // Soundfont player for your instrument
 
